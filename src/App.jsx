@@ -6,6 +6,8 @@ function App() {
 	const [answers, setAnswers] = useState([null, null, null, null, null, null,null, null, null])
 	const [gameWon, setGameWon] = useState(false);
 	const [wasGameEnded, setWasGameEnded] = useState(false);
+	const [refresh, setRefresh] = useState(false);
+
 
 	const handleClick = (event) =>{
 		if(!gameWon){
@@ -36,7 +38,10 @@ function App() {
 
 
 	const isGameWon = (tile1, tile2, tile3) =>{
-		if((tile1 || tile2 || tile3) && (tile1 === tile2 && tile2 === tile3) ) return true;
+		if((tile1 || tile2 || tile3) && (tile1 === tile2 && tile2 === tile3) ) {
+			setRefresh(true)
+			return true;
+		}
 		return false
 	}
 
@@ -48,6 +53,7 @@ function App() {
 		setGameWon(false);
 		setCurrentSymbol('O')
 		setWasGameEnded(true)
+		setRefresh(false)
 		document.getElementsByClassName('result')[0].innerText = ''
 	}
 
@@ -66,7 +72,11 @@ function App() {
 			else {
 				if(!wasGameEnded) setCurrentSymbol(prevState => prevState === 'O' ? 'X' : 'O');
 			}
-			if(!answers.includes(null)) document.getElementsByClassName('result')[0].innerText = 'No one has won';
+			if(!answers.includes(null)){
+				document.getElementsByClassName('result')[0].innerText = 'No one has won';
+				setRefresh(true);
+			}
+
 
 		}
 
@@ -76,21 +86,32 @@ function App() {
 
 	return (
 	<>
-
-		<header className='game_title'>Tic Tac Toe</header>
 		<main>
-			<div className='tales'>
-			{
-				createTiles()
-			}
+			<header className='game_title'>
+				<p>Tic Tac Toe</p>
+			</header>
+			<div className="main_section">
+
+				<div className='tales_container'>
+				{
+					createTiles()
+				}
+				</div>
+
 			</div>
+			<div className="output">
+				<p className='result'>
+					{
+						gameWon ? `Game won by ${currentSymbol}` : ''
+					}
+				</p>
+			</div>
+
 		</main>
-		<div className='result'>
-			{
-				gameWon ? `Game won by ${currentSymbol}` : ''
-			}
+
+		<div className="refresh_icon">
+			<img src="refresh.png" style={{ display: !refresh ? 'none' : 'block', cursor: 'pointer' }} alt="refreshIcon" onClick={() => resetGame()} />
 		</div>
-		<img src="refresh.jpg" alt="refreshIcon" onClick={() => resetGame()} />
 
 	</>
 	);
